@@ -1,0 +1,73 @@
+create or replace 
+PROCEDURE ACTUALIZARE_PRODUS 
+(v_id IN produse.produse_id%TYPE, v_denumire IN produse.denumire%TYPE, v_pret IN produse.pret%TYPE)
+is 
+BEGIN
+  UPDATE PRODUSE 
+  SET denumire = v_denumire, pret = v_pret
+  WHERE produse_id = v_id;
+END ACTUALIZARE_PRODUS;
+/
+
+create or replace 
+PROCEDURE GET_PRODUSE 
+(v_cursor OUT SYS_REFCURSOR)
+IS 
+BEGIN
+  open v_cursor for select * from produse;
+END GET_PRODUSE;
+/
+
+create or replace 
+PROCEDURE INSERARE_PRODUS 
+(v_denumire IN produse.denumire%TYPE, 
+v_pret IN produse.pret%TYPE)
+IS
+BEGIN
+  INSERT INTO produse(denumire, pret) VALUES (v_denumire, v_pret);
+END INSERARE_PRODUS;
+/
+
+create or replace 
+PROCEDURE STERGE_PRODUS 
+(v_id IN NUMBER)
+IS
+BEGIN
+  DELETE FROM produse WHERE produse_id = v_id;
+END STERGE_PRODUS;
+/
+
+create or replace 
+PROCEDURE INSERARE_BON 
+(v_data IN facturi.data%TYPE, v_cif IN facturi.cif%TYPE,
+ v_numar_bucati IN  int_array,
+ v_produse_id IN int_array)
+IS
+v_index NUMBER;
+v_id bonuri.bonuri_id%TYPE;
+BEGIN
+  INSERT INTO bonuri(data, cif) VALUES(v_data, v_cif) RETURNING bonuri_id into v_id;
+  
+  FOR v_index IN 1..v_numar_bucati.COUNT LOOP
+    INSERT INTO tranzactii_bonuri(produse_produse_id, numar_bucati, bonuri_bonuri_id) 
+    values (v_produse_id(v_index), v_numar_bucati(v_index), v_id);
+  END LOOP;
+END INSERARE_BON;
+/
+
+create or replace 
+PROCEDURE INSERARE_FACTURA 
+(v_data IN facturi.data%TYPE, v_cif IN facturi.cif%TYPE,
+ v_numar_bucati IN  int_array,
+ v_produse_id IN int_array)
+IS
+v_index NUMBER;
+v_id facturi.facturi_id%TYPE;
+BEGIN
+  INSERT INTO facturi(data, cif) VALUES(v_data, v_cif) RETURNING facturi_id into v_id;
+  
+  FOR v_index IN 1..v_numar_bucati.COUNT LOOP
+    INSERT INTO tranzactii_facturi(produse_produse_id, numar_bucati, facturi_facturi_id) 
+    values (v_produse_id(v_index), v_numar_bucati(v_index), v_id);
+  END LOOP;
+END INSERARE_FACTURA;

@@ -1,0 +1,2 @@
+create or replace TYPE int_array AS TABLE OF NUMBER;
+create or replace TYPE varchar_array AS TABLE OF VARCHAR2 (50);
