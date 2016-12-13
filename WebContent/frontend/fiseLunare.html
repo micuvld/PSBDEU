@@ -19,8 +19,180 @@
 <body ng-app="MainModule">
 <custom-navbar></custom-navbar>
 <div ng-controller="FisaLunaraController">
-  Birthday (month and year):
+<div style="text-align:center;width:100%">
+  Pentru luna:
   <input type="month" name="bdaymonth" ng-model="luna">
-</div>
+ </div>
+
+
+<div class="container">
+		<div class="row">
+			<div id="columnTabelFacturi" class="col-lg-6">
+				<p style="font-weight: bold">Facturi</p>
+				<hr/>
+				<div style="overflow:scroll;height:450px">
+				<table class="table table-bordered">
+				    <thead>
+				      <tr>
+				        <th>CIF</th>
+				        <th>Total</th>
+				        <th>Vizualizare</th>
+				        <th>Stergere</th>
+				      </tr>
+				    </thead>
+				    <tbody>
+				      <tr ng-repeat="factura in facturi">
+				        <td>{{factura.cif}}</td>
+				        <td>{{factura.total}}</td>
+				        <td>
+				        	<button type="button"
+				        	class="btn btn-info glyphicon glyphicon-edit" 
+				        	data-toggle="modal" data-target="#modalVizualizare{{factura.factura_id}}"></button>
+				        <!-- Modal -->
+							<div id="modalVizualizare{{factura.factura_id}}" class="modal fade" role="dialog">
+							  <div class="modal-dialog">
+							
+							    <!-- Modal content-->
+							    <div class="modal-content">
+							      <div class="modal-header">
+							        <button type="button" class="close" data-dismiss="modal">&times;</button>
+							        <h4 class="modal-title">Vizualizare factura cu CIF: {{factura.cif}}</h4>
+							      </div>
+							      <div class="modal-body">
+							      	<table class="table table-bordered">
+									    <thead>
+									      <tr>
+									        <th>Denumire</th>
+									        <th>Numar bucati</th>
+									        <th>Pret/buc</th>
+									        <th>Suma</th>
+									      </tr>
+									    </thead>
+									    <tbody>
+									    	<tr ng-repeat="tranzactie in factura.tranzactii">
+									    		<th>{{tranzactie.denumire_produs}}</th>
+									    		<th>{{tranzactie.numar_bucati}}</th>
+									    		<th>{{tranzactie.pret_buc}}</th>
+									    		<th>{{tranzactie.suma}}</th>
+									    	</tr>
+									    </tbody>
+									  </table>
+									  <p style="text-align:right; font-weight:bold">Total factura: 1234{{factura.total}}</p>
+							      </div>
+							      <div class="modal-footer">
+							        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+							        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="actualizare(produs.id)">Update</button>
+							      </div>
+							    </div>
+							
+							  </div>
+							</div>
+						</td>
+				        <td>
+				        <button type="button"
+				        	class="btn btn-danger glyphicon glyphicon-trash" 
+				        	data-toggle="modal" data-target="#modalStergere{{factura.factura_id}}"></button>
+				        <!-- Modal -->
+							<div id="modalStergere{{factura.factura_id}}" class="modal fade" role="dialog">
+							  <div class="modal-dialog">
+							
+							    <!-- Modal content-->
+							    <div class="modal-content">
+							      <div class="modal-header">
+							        <button type="button" class="close" data-dismiss="modal">&times;</button>
+							        <h4 class="modal-title">Stergeti produsul: {{produs.denumire}}?</h4>
+							      </div>
+							      <div class="modal-footer">
+							        <button type="button" class="btn btn-default" data-dismiss="modal">Nu</button>
+							        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="stergere(produs.id)">Da</button>
+							      </div>
+							    </div>
+							
+							  </div>
+							</div>
+						</td>
+				      </tr>
+				    </tbody>
+			  	</table>
+			  	</div>
+			</div>
+			
+			<div id="columnTabelBonuri" class="col-lg-6">
+				<p style="font-weight: bold">Bonuri</p>
+				<hr/>
+				<div style="overflow:scroll;height:450px">
+				<table class="table table-bordered">
+				    <thead>
+				      <tr>
+				        <th>CIF</th>
+				        <th>Total</th>
+				        <th>Vizualizare</th>
+				        <th>Stergere</th>
+				      </tr>
+				    </thead>
+				    <tbody>
+				      <tr ng-repeat="bon in bonuri">
+				        <td>{{bon.cif}}</td>
+				        <td>{{bon.total}}</td>
+				        <td>
+				        	<button type="button"
+				        	class="btn btn-info glyphicon glyphicon-edit" 
+				        	data-toggle="modal" data-target="#modalVizualizare{{bon.bon_id}}"></button>
+				        <!-- Modal -->
+							<div id="modalVizualizare{{bon.bon_id}}" class="modal fade" role="dialog">
+							  <div class="modal-dialog">
+							
+							    <!-- Modal content-->
+							    <div class="modal-content">
+							      <div class="modal-header">
+							        <button type="button" class="close" data-dismiss="modal">&times;</button>
+							        <h4 class="modal-title">Actualizare produs cu ID: {{produs.id}}</h4>
+							      </div>
+							      <div class="modal-body">
+							      	<label>Denumire:</label>
+							        <input id="denumire{{produs.id}}" type="text" value="{{produs.denumire}}"/>
+							        <label>Pret:</label>
+							        <input id="pret{{produs.id}}"type="text" value="{{produs.pret}}"/>
+							      </div>
+							      <div class="modal-footer">
+							        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+							        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="actualizare(produs.id)">Update</button>
+							      </div>
+							    </div>
+							
+							  </div>
+							</div>
+						</td>
+				        <td>
+				        <button type="button"
+				        	class="btn btn-danger glyphicon glyphicon-trash" 
+				        	data-toggle="modal" data-target="#modalStergere{{bon.bon_id}}"></button>
+				        <!-- Modal -->
+							<div id="modalStergere{{bon.bon_id}}" class="modal fade" role="dialog">
+							  <div class="modal-dialog">
+							
+							    <!-- Modal content-->
+							    <div class="modal-content">
+							      <div class="modal-header">
+							        <button type="button" class="close" data-dismiss="modal">&times;</button>
+							        <h4 class="modal-title">Stergeti produsul: {{produs.denumire}}?</h4>
+							      </div>
+							      <div class="modal-footer">
+							        <button type="button" class="btn btn-default" data-dismiss="modal">Nu</button>
+							        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="stergere(produs.id)">Da</button>
+							      </div>
+							    </div>
+							
+							  </div>
+							</div>
+						</td>
+				      </tr>
+				    </tbody>
+			  	</table>
+			  	</div>
+			</div>
+		</div>
+	</div>
+	</div>
 </body>
 </html>

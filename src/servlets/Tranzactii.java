@@ -69,7 +69,6 @@ public class Tranzactii extends HttpServlet {
 		System.out.println((String)jsonReceived.get("data")); 
 
 		java.sql.Date dataFormular = Utils.getDate(jsonReceived.get("data")); 
-
 		
 		String cifFormular = (String)jsonReceived.get("cif");
 		String tipFormular = (String)jsonReceived.get("tip");

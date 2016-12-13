@@ -89,6 +89,7 @@ public class FisaLunara extends HttpServlet {
 		    	json.put("numar_bucati", resultFacturi.getString("numar_bucati"));
 		    	json.put("produs_id", resultFacturi.getString("produse_id"));
 		    	json.put("denumire_produs", resultFacturi.getString("denumire"));
+		    	json.put("pret_produs", resultFacturi.getString("pret"));
 		    	
 		    	listFacturi.add(json);
 		      }
@@ -104,6 +105,7 @@ public class FisaLunara extends HttpServlet {
 		    	json.put("numar_bucati", resultBonuri.getString("numar_bucati"));
 		    	json.put("produs_id", resultBonuri.getString("produse_id"));
 		    	json.put("denumire_produs", resultBonuri.getString("denumire"));
+		    	json.put("pret_produs", resultBonuri.getString("pret"));
 		    	
 		    	listBonuri.add(json);
 		      }
