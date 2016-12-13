@@ -14,9 +14,13 @@
 	
 <script type="text/javascript" src="modules/MainModule.js"></script>
 <script type="text/javascript" src="directives/CustomNavbar.js"></script>
+<script type="text/javascript" src="controllers/FisaLunaraController.js"></script>
 </head>
 <body ng-app="MainModule">
 <custom-navbar></custom-navbar>
-Fise lunare
+<div ng-controller="FisaLunaraController">
+  Birthday (month and year):
+  <input type="month" name="bdaymonth" ng-model="luna">
+</div>
 </body>
 </html>

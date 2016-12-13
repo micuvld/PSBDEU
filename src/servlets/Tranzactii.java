@@ -68,7 +68,7 @@ public class Tranzactii extends HttpServlet {
 		}
 		System.out.println((String)jsonReceived.get("data")); 
 
-		java.sql.Date dataFormular = getDate(jsonReceived.get("data")); 
+		java.sql.Date dataFormular = Utils.getDate(jsonReceived.get("data")); 
 
 		
 		String cifFormular = (String)jsonReceived.get("cif");
@@ -139,27 +139,6 @@ public class Tranzactii extends HttpServlet {
 			} catch (SQLException se2) {
 			}
 		} // end tr
-	}
-	
-	private Date getDate(Object dateString) {
-		String dataFormularString = (String)(dateString);
-		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
-		java.util.Date date = null;
-		try {
-			date = sdf1.parse(dataFormularString);
-
-		} catch (java.text.ParseException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		}
-		
-		Calendar c = Calendar.getInstance(); 
-		c.setTime(date); 
-		c.add(Calendar.DATE, 1);
-		date = c.getTime();
-		
-		System.out.println(date.toString());
-		return new java.sql.Date(date.getTime());
 	}
 
 }

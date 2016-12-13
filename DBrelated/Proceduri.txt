@@ -71,3 +71,27 @@ BEGIN
     values (v_produse_id(v_index), v_numar_bucati(v_index), v_id);
   END LOOP;
 END INSERARE_FACTURA;
+/
+
+CREATE OR REPLACE PROCEDURE GET_FACTURI_SI_BONURI 
+(v_luna IN facturi.data%TYPE,v_cursor_facturi OUT SYS_REFCURSOR, v_cursor_bonuri OUT SYS_REFCURSOR)
+IS
+BEGIN
+  OPEN v_cursor_facturi 
+  FOR SELECT f.facturi_id, f.data, f.cif, f.total, t.numar_bucati, p.produse_id, p.denumire
+    FROM facturi f
+    INNER JOIN tranzactii_facturi t
+    ON f.facturi_id = t.facturi_facturi_id
+    INNER JOIN produse p
+    ON t.produse_produse_id = p.produse_id
+    WHERE to_char(f.data,'mm:yyyy') = to_char(v_luna, 'mm:yyyy');
+    
+  OPEN v_cursor_bonuri 
+  FOR SELECT b.bonuri_id, b.data, b.cif, b.total, t.numar_bucati, p.produse_id, p.denumire
+    FROM bonuri b
+    INNER JOIN tranzactii_bonuri t
+    ON b.bonuri_id = t.bonuri_bonuri_id
+    INNER JOIN produse p
+    ON t.produse_produse_id = p.produse_id
+    WHERE to_char(b.data,'mm:yyyy') = to_char(v_luna, 'mm:yyyy');
+END GET_FACTURI_SI_BONURI;
