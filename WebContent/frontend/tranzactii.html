@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Produse</title>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+	
+<script type="text/javascript" src="modules/MainModule.js"></script>
+<script type="text/javascript" src="directives/CustomNavbar.js"></script>
+<script type="text/javascript" src="controllers/TranzactieController.js"></script>
+<style>
+td {
+text-align:center;
+padding: 0px;
+}
+</style>
+</head>
+<body ng-app="MainModule">
+	<custom-navbar></custom-navbar>
+	
+	<div class="container" ng-controller="TranzactieController">
+	  	<form class="row">
+	      	<div class="form-group col-md-3">
+				<label>Data:</label>
+				<input type="date" class="form-control" id="data_tranzactie" ng-model="dataFormular">
+		    </div>
+		    <div class="form-group col-md-3">
+				<label>CIF:</label>
+				<input type="text" class="form-control" id="cif_tranzactie" ng-model="cifFormular">
+			</div>
+		</form>
+		<hr>
+		
+		<div class="row">
+			<div class="form-group col-md-3">
+				<label>Denumire produs</label>
+			</div>
+			<div class="form-group col-md-3">
+				<label>Numar bucati</label>
+			</div>
+		</div>
+		
+		<form id="form_produse" class="form-inline row" ng-repeat="tranzactie in tranzactii">
+			<div class="form-group col-md-3">
+				<select class="form-control" id="select_produs" ng-model="tranzactie.produs"
+					ng-options="produs as produs.denumire for produs in produse">
+					
+				</select>
+			</div>
+			<div class="form-group col-md-3">
+				<input type="number" class="form-control" id="input_numar_bucati" ng-model="tranzactie.numarBucati">
+			</div>
+		</form>
+		<br>
+		<div class="">
+			<button class="btn" ng-click="addTranzactie()">+</button>
+		</div>
+		
+		<hr>
+		<form class="form-inline">
+			<div class="radio">
+	  			<label><input type="radio" name="optradio" ng-model="tipFormular" id="optiune_bon" value="bon">Bon (Iesire)</label>
+			</div>
+			<div class="radio">
+	 			<label><input type="radio" name="optradio" ng-model="tipFormular" id="optiune_factura" value="factura">Factura (Intrare)</label>
+			</div>
+		</form>
+	
+		<button ng-click="trimiteFormular()">Trimite</button>
+     </div>
+</body>
+</html>
