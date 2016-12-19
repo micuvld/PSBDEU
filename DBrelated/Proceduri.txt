@@ -23,18 +23,12 @@ PROCEDURE INSERARE_PRODUS
 (v_denumire IN produse.denumire%TYPE, 
 v_pret IN produse.pret%TYPE)
 IS
+v_id produse.produse_id%TYPE;
 BEGIN
-  INSERT INTO produse(denumire, pret) VALUES (v_denumire, v_pret);
+  INSERT INTO produse(denumire, pret) VALUES (v_denumire, v_pret) RETURNING produse_id into v_id;
+  
+  INSERT INTO stocuri(numarbucati, produse_produse_id) VALUES (0, v_id);
 END INSERARE_PRODUS;
-/
-
-create or replace 
-PROCEDURE STERGE_PRODUS 
-(v_id IN NUMBER)
-IS
-BEGIN
-  DELETE FROM produse WHERE produse_id = v_id;
-END STERGE_PRODUS;
 /
 
 create or replace 
@@ -44,9 +38,16 @@ PROCEDURE INSERARE_BON
  v_produse_id IN int_array)
 IS
 v_index NUMBER;
+v_pret_produs produse.pret%TYPE;
+v_suma NUMBER := 0;
 v_id bonuri.bonuri_id%TYPE;
 BEGIN
-  INSERT INTO bonuri(data, cif) VALUES(v_data, v_cif) RETURNING bonuri_id into v_id;
+  FOR v_index IN 1..v_produse_id.COUNT LOOP
+    SELECT pret INTO v_pret_produs FROM produse WHERE produse_id = v_produse_id(v_index);
+    v_suma := v_suma + v_pret_produs * v_numar_bucati(v_index);
+  END LOOP;
+
+  INSERT INTO bonuri(data, cif, total) VALUES(v_data, v_cif, v_suma) RETURNING bonuri_id into v_id;
   
   FOR v_index IN 1..v_numar_bucati.COUNT LOOP
     INSERT INTO tranzactii_bonuri(produse_produse_id, numar_bucati, bonuri_bonuri_id) 
@@ -62,9 +63,16 @@ PROCEDURE INSERARE_FACTURA
  v_produse_id IN int_array)
 IS
 v_index NUMBER;
+v_pret_produs produse.pret%TYPE;
+v_suma NUMBER := 0;
 v_id facturi.facturi_id%TYPE;
-BEGIN
-  INSERT INTO facturi(data, cif) VALUES(v_data, v_cif) RETURNING facturi_id into v_id;
+BEGIN  
+  FOR v_index IN 1..v_produse_id.COUNT LOOP
+    SELECT pret INTO v_pret_produs FROM produse WHERE produse_id = v_produse_id(v_index);
+    v_suma := v_suma + v_pret_produs * v_numar_bucati(v_index);
+  END LOOP;
+  
+  INSERT INTO facturi(data, cif, total) VALUES(v_data, v_cif, v_suma) RETURNING facturi_id into v_id;
   
   FOR v_index IN 1..v_numar_bucati.COUNT LOOP
     INSERT INTO tranzactii_facturi(produse_produse_id, numar_bucati, facturi_facturi_id) 

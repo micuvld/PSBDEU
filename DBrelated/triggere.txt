@@ -1,0 +1,19 @@
+create or replace trigger update_stocuri_bon
+before insert on tranzactii_bonuri
+for each row
+begin
+  update stocuri
+  set numarbucati = numarbucati - :new.numar_bucati
+  where produse_produse_id = :new.produse_produse_id;
+end;
+/
+
+create or replace trigger update_stocuri_facturi
+before insert on tranzactii_facturi
+for each row
+begin
+  update stocuri
+  set numarbucati = numarbucati + :new.numar_bucati
+  where produse_produse_id = :new.produse_produse_id;
+end;
+/

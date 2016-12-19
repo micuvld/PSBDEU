@@ -14,6 +14,7 @@
 	
 <script type="text/javascript" src="modules/MainModule.js"></script>
 <script type="text/javascript" src="directives/CustomNavbar.js"></script>
+<script type="text/javascript" src="directives/StringToNumber.js"></script>
 <script type="text/javascript" src="controllers/FisaLunaraController.js"></script>
 </head>
 <body ng-app="MainModule">
@@ -43,11 +44,12 @@
 				    <tbody>
 				      <tr ng-repeat="factura in facturi">
 				        <td>{{factura.cif}}</td>
-				        <td>{{factura.total}}</td>
+				        <td>{{factura.total}}<button ng-click="setFacturaCurenta(1)">da</button></td>
 				        <td>
 				        	<button type="button"
 				        	class="btn btn-info glyphicon glyphicon-edit" 
-				        	data-toggle="modal" data-target="#modalVizualizare{{factura.factura_id}}"></button>
+				        	data-toggle="modal" data-target="#modalVizualizare{{factura.factura_id}}"
+				        	ng-click="setFacturaCurenta(factura)"></button>
 				        <!-- Modal -->
 							<div id="modalVizualizare{{factura.factura_id}}" class="modal fade" role="dialog">
 							  <div class="modal-dialog">
@@ -71,13 +73,13 @@
 									    <tbody>
 									    	<tr ng-repeat="tranzactie in factura.tranzactii">
 									    		<th>{{tranzactie.denumire_produs}}</th>
-									    		<th>{{tranzactie.numar_bucati}}</th>
+									    		<th><input type="number" string-to-number ng-model="tranzactie.numar_bucati"></th>
 									    		<th>{{tranzactie.pret_buc}}</th>
 									    		<th>{{tranzactie.suma}}</th>
 									    	</tr>
 									    </tbody>
 									  </table>
-									  <p style="text-align:right; font-weight:bold">Total factura: 1234{{factura.total}}</p>
+									  <p style="text-align:right; font-weight:bold">Total factura: {{factura.total}}</p>
 							      </div>
 							      <div class="modal-footer">
 							        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -100,7 +102,7 @@
 							    <div class="modal-content">
 							      <div class="modal-header">
 							        <button type="button" class="close" data-dismiss="modal">&times;</button>
-							        <h4 class="modal-title">Stergeti produsul: {{produs.denumire}}?</h4>
+							        <h4 class="modal-title">sterge factura cu CIF: {{factura.cif}}</h4>
 							      </div>
 							      <div class="modal-footer">
 							        <button type="button" class="btn btn-default" data-dismiss="modal">Nu</button>
@@ -137,22 +139,36 @@
 				        <td>
 				        	<button type="button"
 				        	class="btn btn-info glyphicon glyphicon-edit" 
-				        	data-toggle="modal" data-target="#modalVizualizare{{bon.bon_id}}"></button>
+				        	data-toggle="modal" data-target="#modalVizualizareBon{{bon.bon_id}}"></button>
 				        <!-- Modal -->
-							<div id="modalVizualizare{{bon.bon_id}}" class="modal fade" role="dialog">
+							<div id="modalVizualizareBon{{bon.bon_id}}" class="modal fade" role="dialog">
 							  <div class="modal-dialog">
 							
 							    <!-- Modal content-->
 							    <div class="modal-content">
 							      <div class="modal-header">
 							        <button type="button" class="close" data-dismiss="modal">&times;</button>
-							        <h4 class="modal-title">Actualizare produs cu ID: {{produs.id}}</h4>
+							           < <h4 class="modal-title">Vizualizare bon cu CIF: {{bon.cif}}</h4>
 							      </div>
 							      <div class="modal-body">
-							      	<label>Denumire:</label>
-							        <input id="denumire{{produs.id}}" type="text" value="{{produs.denumire}}"/>
-							        <label>Pret:</label>
-							        <input id="pret{{produs.id}}"type="text" value="{{produs.pret}}"/>
+							      	<table class="table table-bordered">
+									    <thead>
+									      <tr>
+									        <th>Denumire</th>
+									        <th>Numar bucati</th>
+									        <th>Pret/buc</th>
+									        <th>Suma</th>
+									      </tr>
+									    </thead>
+									    <tbody>
+									    	<tr ng-repeat="tranzactie in bon.tranzactii">
+									    		<th>{{tranzactie.denumire_produs}}</th>
+									    		<th>{{tranzactie.numar_bucati}}</th>
+									    		<th>{{tranzactie.pret_buc}}</th>
+									    		<th>{{tranzactie.suma}}</th>
+									    	</tr>
+									    </tbody>
+									  </table>
 							      </div>
 							      <div class="modal-footer">
 							        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
