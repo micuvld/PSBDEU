@@ -15,9 +15,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import oracle.jdbc.OracleCallableStatement;
 import oracle.jdbc.internal.OracleTypes;
+import oracle.sql.ARRAY;
+import oracle.sql.ArrayDescriptor;
 
 /**
  * Servlet implementation class FisaLunara
@@ -40,7 +44,93 @@ public class FisaLunara extends HttpServlet {
 	 */
 	protected void doPut(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		Connection connection = DatabaseManager.getInstance().getConnection();
+		CallableStatement statement = null;
 		
+		JSONParser parser = new JSONParser();
+		JSONObject jsonReceived = new JSONObject();
+		
+		try {
+			jsonReceived = (JSONObject)parser.parse(request.getReader());
+		} catch (ParseException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		System.out.println((String)jsonReceived.get("data")); 
+
+		java.sql.Date dataFormular = Utils.getDate(jsonReceived.get("data"));
+		
+		int id = Integer.parseInt((String)jsonReceived.get("id"));
+		System.out.println("id:" + id);
+		String cifFormular = (String)jsonReceived.get("cif");
+		String tipFormular = (String)jsonReceived.get("tip");
+		
+		JSONArray numarBucatiJsonArray = (JSONArray)jsonReceived.get("numarBucati");
+		JSONArray idProduseJsonArray = (JSONArray)jsonReceived.get("idProduse");
+		
+		long[] numarBucati = new long[numarBucatiJsonArray.size()];
+		long[] idProduse = new long[idProduseJsonArray.size()];
+
+		// Extract numbers from JSON array.
+		for (int i = 0; i < numarBucatiJsonArray.size(); ++i) {
+			numarBucati[i] = (long)numarBucatiJsonArray.get(i);
+			idProduse[i] = (long)idProduseJsonArray.get(i);
+		}
+		
+		System.out.println(numarBucati[0]);
+		String returning = "base";
+		
+		ArrayDescriptor userDescriptor;
+		ARRAY numarBucatiList = null;
+		ARRAY idProduseList = null;
+		try {
+			userDescriptor = ArrayDescriptor.createDescriptor("INT_ARRAY",
+					connection.unwrap(oracle.jdbc.OracleConnection.class));
+			numarBucatiList = new ARRAY(userDescriptor, 
+					connection.unwrap(oracle.jdbc.OracleConnection.class),
+					numarBucati);
+			
+			userDescriptor = ArrayDescriptor.createDescriptor("INT_ARRAY",
+					connection.unwrap(oracle.jdbc.OracleConnection.class));
+			idProduseList = new ARRAY(userDescriptor, 
+					connection.unwrap(oracle.jdbc.OracleConnection.class),
+					idProduse);
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		try {
+			String sql = "{call actualizare_" + tipFormular + " (?, ?, ?, ?, ?)}";
+			statement = connection.prepareCall(sql);
+
+			statement.setInt(1, id);
+			statement.setDate(2, dataFormular);
+			statement.setString(3, cifFormular);
+			statement.setArray(4, numarBucatiList);
+			statement.setArray(5, idProduseList);
+			//statement.registerOutParameter(2, OracleTypes.VARCHAR);
+			
+
+			statement.execute();
+			System.out.println("smth");
+			//returning = ((OracleCallableStatement)statement).getString(2);
+			//System.out.print(returning);
+			statement.close();
+		} catch (SQLException se) {
+			// Handle errors for JDBC
+			se.printStackTrace();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+		} finally {
+			// finally block used to close resources
+			try {
+				if (statement != null)
+					statement.close();
+			} catch (SQLException se2) {
+			}
+		} // end tr
 	}
 	
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response)

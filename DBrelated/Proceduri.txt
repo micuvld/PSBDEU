@@ -60,23 +60,22 @@ create or replace
 PROCEDURE INSERARE_FACTURA 
 (v_data IN facturi.data%TYPE, v_cif IN facturi.cif%TYPE,
  v_numar_bucati IN  int_array,
- v_produse_id IN int_array)
+ v_produse_id IN int_array,
+ v_preturi IN int_array)
 IS
 v_index NUMBER;
-v_pret_produs produse.pret%TYPE;
 v_suma NUMBER := 0;
 v_id facturi.facturi_id%TYPE;
 BEGIN  
-  FOR v_index IN 1..v_produse_id.COUNT LOOP
-    SELECT pret INTO v_pret_produs FROM produse WHERE produse_id = v_produse_id(v_index);
-    v_suma := v_suma + v_pret_produs * v_numar_bucati(v_index);
+  FOR v_index IN 1..v_preturi.COUNT LOOP
+    v_suma := v_suma + v_preturi(v_index);
   END LOOP;
   
   INSERT INTO facturi(data, cif, total) VALUES(v_data, v_cif, v_suma) RETURNING facturi_id into v_id;
   
   FOR v_index IN 1..v_numar_bucati.COUNT LOOP
-    INSERT INTO tranzactii_facturi(produse_produse_id, numar_bucati, facturi_facturi_id) 
-    values (v_produse_id(v_index), v_numar_bucati(v_index), v_id);
+    INSERT INTO tranzactii_facturi(produse_produse_id, numar_bucati, facturi_facturi_id, pret_actual) 
+    values (v_produse_id(v_index), v_numar_bucati(v_index), v_id, v_preturi(v_index));
   END LOOP;
 END INSERARE_FACTURA;
 /
@@ -103,3 +102,17 @@ BEGIN
     ON t.produse_produse_id = p.produse_id
     WHERE to_char(b.data,'mm:yyyy') = to_char(v_luna, 'mm:yyyy');
 END GET_FACTURI_SI_BONURI;
+/
+
+create or replace 
+PROCEDURE ACTUALIZARE_FACTURA
+(v_id IN facturi.facturi_id%TYPE, v_data IN facturi.data%TYPE, v_cif IN facturi.cif%TYPE,
+ v_numar_bucati IN  int_array,
+ v_produse_id IN int_array,
+ v_preturi IN int_array)
+IS
+BEGIN  
+  DELETE FROM FACTURI WHERE facturi_id = v_id;
+
+  INSERARE_FACTURA(v_data, v_cif, v_numar_bucati, v_produse_id, v_preturi);
+END ACTUALIZARE_FACTURA;

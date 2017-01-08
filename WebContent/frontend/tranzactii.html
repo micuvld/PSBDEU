@@ -25,6 +25,17 @@ padding: 0px;
 	<custom-navbar></custom-navbar>
 	
 	<div class="container" ng-controller="TranzactieController">
+		<form class="form-inline">
+			<div class="radio">
+	  			<label><input type="radio" name="optradio" ng-model="tipFormular" id="optiune_bon" value="bon">Bon (Iesire)</label>
+			</div>
+			<div class="radio">
+	 			<label><input type="radio" name="optradio" ng-model="tipFormular" id="optiune_factura" value="factura">Factura (Intrare)</label>
+			</div>
+		</form>
+	
+		<hr>
+	
 	  	<form class="row">
 	      	<div class="form-group col-md-3">
 				<label>Data:</label>
@@ -63,15 +74,7 @@ padding: 0px;
 		</div>
 		
 		<hr>
-		<form class="form-inline">
-			<div class="radio">
-	  			<label><input type="radio" name="optradio" ng-model="tipFormular" id="optiune_bon" value="bon">Bon (Iesire)</label>
-			</div>
-			<div class="radio">
-	 			<label><input type="radio" name="optradio" ng-model="tipFormular" id="optiune_factura" value="factura">Factura (Intrare)</label>
-			</div>
-		</form>
-	
+		
 		<button ng-click="trimiteFormular()">Trimite</button>
      </div>
 </body>

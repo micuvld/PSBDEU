@@ -1,11 +1,14 @@
 MainModule.controller('FisaLunaraController', [ '$scope', '$http',
 		function($scope, $http) {
+			$scope.produse = "";
 			$scope.facturi = "";
 			$scope.bonuri = "";
 			$scope.luna = new Date();
 			$scope.facturaCurenta = "";
-			$scope.facturaCurentaId = -1;
-			$scope.facturaCurentaCif = -1;
+			
+			$scope.produsNou = {
+					obiect: ""
+			};
 	
 			function getFacturiSiBonuri() {
 				$http({
@@ -25,7 +28,20 @@ MainModule.controller('FisaLunaraController', [ '$scope', '$http',
 					$scope.raspuns = "Eroare";
 				});
 			}
+			
+			function getProduse() {
+				$http({
+					method: "GET",
+					url: "/TestPSBD/Produs"
+				}).then(function success(response) {
+					console.log(response.data);
+					$scope.produse = response.data;
+				}, function error(response) {
+					$scope.raspuns = "Eroare";
+				});
+			}
 
+			getProduse();
 			getFacturiSiBonuri();
 			
 			function separaFacturi() {
@@ -55,6 +71,7 @@ MainModule.controller('FisaLunaraController', [ '$scope', '$http',
 					
 					facturi[i].tranzactii = facturi[i].tranzactii.map(function(element) {
 						return {
+							id: element.produs_id,
 							denumire_produs: element.denumire_produs,
 							numar_bucati: element.numar_bucati,
 							pret_buc: element.pret_produs,
@@ -91,6 +108,7 @@ MainModule.controller('FisaLunaraController', [ '$scope', '$http',
 					})
 					bonuri[i].tranzactii = bonuri[i].tranzactii.map(function(element){
 						return{
+							id: element.produs_id,
 							denumire_produs: element.denumire_produs,
 							numar_bucati: element.numar_bucati,
 							pret_buc: element.pret_produs,
@@ -105,32 +123,53 @@ MainModule.controller('FisaLunaraController', [ '$scope', '$http',
 			}
 			
 		
-			$scope.updateFiseLunare = function() {
+			$scope.updateFactura = function() {
 				var jsonToSend = {
 						data: $scope.luna,
-						factura_id: $scope.facturaCurentaId,
-						cif: $scope.facturaCurentaCif,
-						numarBucati: $scope.tranzactii.map(function(currentElement, index, arr) {
-							return currentElement.numarBucati;
+						id: $scope.facturaCurenta.factura_id,
+						cif: $scope.facturaCurenta.cif,
+						numarBucati: $scope.facturaCurenta.tranzactii.map(function(currentElement, index, arr) {
+							return parseInt(currentElement.numar_bucati);
 						}),
-						idProduse: $scope.tranzactii.map(function(currentElement, index, arr) {
-							return parseInt(currentElement.produs.id);
+						idProduse: $scope.facturaCurenta.tranzactii.map(function(currentElement, index, arr) {
+							return parseInt(currentElement.id);
 						}),
-						tip: $scope.tipFormular
+						tip: 'factura'
 					}
 					console.log(jsonToSend);
 					
-//					$http({
-//						method: "POST",
-//						url: "/TestPSBD/Tranzactie",
-//						data: jsonToSend
-//					})
+					$http({
+						method: "PUT",
+						url: "/TestPSBD/FisaLunara",
+						data: jsonToSend
+					})
 			}
 			
 			$scope.setFacturaCurenta = function(factura) {
-				console.log('a');
-				$scope.factura = factura;
-				console.log($scope.factura);
+				$scope.facturaCurenta = factura;
+				console.log($scope.facturaCurenta);
+			}
+			
+			$scope.adaugaProdus = function(produs) {
+				$scope.facturaCurenta.tranzactii.push({
+					denumire_produs: $scope.produsNou.obiect.denumire,
+					id: $scope.produsNou.obiect.id,
+					numar_bucati: 0,
+					pret_buc: $scope.produsNou.obiect.pret,
+					suma: 0
+				})
+			}
+			
+			$scope.actualizeazaSumaSiTotal = function() {
+				$scope.facturaCurenta.total = 0;
+				for (var k = 0; k < $scope.facturaCurenta.tranzactii.length; ++k) {
+					console.log($scope.facturaCurenta.tranzactii[k].numarBucati);
+					console.log($scope.facturaCurenta.tranzactii[k].pret);
+					$scope.facturaCurenta.tranzactii[k].suma = parseInt($scope.facturaCurenta.tranzactii[k].numar_bucati)
+						* parseInt($scope.facturaCurenta.tranzactii[k].pret_buc);
+					
+					$scope.facturaCurenta.total += $scope.facturaCurenta.tranzactii[k].suma;
+				}
 			}
 			
 		} ]);

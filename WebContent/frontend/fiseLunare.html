@@ -44,7 +44,7 @@
 				    <tbody>
 				      <tr ng-repeat="factura in facturi">
 				        <td>{{factura.cif}}</td>
-				        <td>{{factura.total}}<button ng-click="setFacturaCurenta(1)">da</button></td>
+				        <td>{{factura.total}}</td>
 				        <td>
 				        	<button type="button"
 				        	class="btn btn-info glyphicon glyphicon-edit" 
@@ -73,17 +73,21 @@
 									    <tbody>
 									    	<tr ng-repeat="tranzactie in factura.tranzactii">
 									    		<th>{{tranzactie.denumire_produs}}</th>
-									    		<th><input type="number" string-to-number ng-model="tranzactie.numar_bucati"></th>
+									    		<th><input type="number" string-to-number ng-model="tranzactie.numar_bucati"
+									    		ng-change="actualizeazaSumaSiTotal()"></th>
 									    		<th>{{tranzactie.pret_buc}}</th>
 									    		<th>{{tranzactie.suma}}</th>
 									    	</tr>
 									    </tbody>
 									  </table>
+									  +
+									  <select ng-options="produs.denumire for produs in produse"
+									   ng-change="adaugaProdus()" ng-model="produsNou.obiect"></select>
 									  <p style="text-align:right; font-weight:bold">Total factura: {{factura.total}}</p>
 							      </div>
 							      <div class="modal-footer">
 							        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-							        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="actualizare(produs.id)">Update</button>
+							        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="updateFactura()">Update</button>
 							      </div>
 							    </div>
 							

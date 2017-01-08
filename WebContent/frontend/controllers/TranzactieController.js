@@ -11,8 +11,6 @@ MainModule.controller('TranzactieController', [ '$scope', '$http', function($sco
 		$scope.dataFormular = "";
 		$scope.cifFormular = "";
 		$scope.tipFormular = "";
-		$scope.anca = "";
-		console.log("HSHSHS00");
 
 		
 		function getProduse() {
